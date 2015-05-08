@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang='en'>
+    <head>
+        <meta charset='utf-8'>
+        <meta http-equiv='X-UA-Compatible' content='IE=edge'>
+        <meta name='viewport' content='width=device-width, initial-scale=1'>
+        <meta name='description' content>
+        <meta name='author' content>
+        <title>Ajax LED</title>
+
+        <style>
+            h1 {
+                text-align: center;
+                font-size: 36px;
+            }
+
+            .buttons button {
+                font-size: 24px;
+                border-radius: 4px;
+                padding: 1.5% 3%;
+                margin: 0 5%;
+            }
+
+            form {
+                margin: auto;
+                width: 80%;
+                text-align: center;
+            }
+
+            .buttons {
+                margin: auto;
+                width: 80%;
+                text-align: center;
+            }
+        </style>
+    </head>
+
+    <body>
+        <h1>AJAX LED Example</h1>
+        <br>
+        <div class='buttons'>
+            <button id='on' data-state='0'>ON</button>
+            <button id='off' data-state='1'>OFF</button>
+        </div>
+        <br>
+        <div class='color'>
+            <form id='color-form'>
+                <label>RED: </label><input id='red'></input>
+                <label>GREEN: </label><input id='green'></input>
+                <label>BLUE: </label><input id='blue'></input>
+                <button type='submit' id='color'>Set Color</button>
+            </form>
+        </div>
+
+        <!-- jQuery -->
+        <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
+
+        <!-- JavaScript File -->
+        <script>
+            $(document).ready(function() {
+                var agentURL = 'https://agent.electricimp.com/KToEhaVnO0S4';
+
+                $('.buttons button').on('click', getStateInput);
+                $('#color').on('click', getColorInput);
+
+                function getStateInput(e){
+                    var state = e.currentTarget.dataset.state;
+                    sendState(parseInt(state));
+                }
+
+                function getColorInput(e){
+                    e.preventDefault();
+                    var colors = {};
+                    colors.red = checkColorInput( $('#red').val() );
+                    colors.green = checkColorInput( $('#green').val() );
+                    colors.blue = checkColorInput( $('#blue').val() );
+                    sendColor(colors);
+                    $('#color-form').trigger('reset');
+                }
+
+                function checkColorInput(input) {
+                    input = parseInt(input);
+                    if ( isNaN(input) ) {
+                        return 0;
+                    } else {
+                        return input;
+                    }
+                }
+
+                function getState(callback) {
+                    $.ajax({
+                        url : agentURL + '/state',
+                        type: 'GET',
+                        success : function(response) {
+                            if (callback) {callback(response.state)};
+                        }
+                    });
+                }
+
+                function getColor(callback) {
+                    $.ajax({
+                        url: agentURL + '/color',
+                        type: 'GET',
+                        success : function(response) {
+                            if (callback) {callback(response.color)};
+                        }
+                    });
+                }
+
+                function sendState(state) {
+                    $.ajax({
+                        url : agentURL + '/state',
+                        type: 'POST',
+                        data: JSON.stringify({ 'state' : state }),
+                        success : function(response) {
+                            console.log(response)
+                        },
+                        error : function(jqXHR, textStatus, err) {
+                            console.log(jqXHR.status + ' ' + textStatus + ': ' + err + ' - ' + jqXHR.responseText);
+                        }
+                    });
+                }
+
+                function sendColor(color) {
+                    $.ajax({
+                        url : agentURL + '/color',
+                        type: 'POST',
+                        data: JSON.stringify({ 'color' : color }),
+                        success : function(response) {
+                            console.log(response)
+                        },
+                        error : function(jqXHR, textStatus, err) {
+                            console.log(jqXHR.status + ' ' + textStatus + ': ' + err + ' - ' + jqXHR.responseText);
+                        }
+                    });
+                }
+
+            })
+        </script>
+
+    </body>
+</html>
