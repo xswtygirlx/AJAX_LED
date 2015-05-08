@@ -39,6 +39,8 @@
         <h1>AJAX LED Example</h1>
         <br>
         <div class='buttons'>
+            <!-- current data-state values are for anode common RGB LED -->
+            <!-- data-state values should match your imp's device code setup on/off values -->
             <button id='on' data-state='0'>ON</button>
             <button id='off' data-state='1'>OFF</button>
         </div>
@@ -58,6 +60,8 @@
         <!-- JavaScript File -->
         <script>
             $(document).ready(function() {
+                // This is my test setup agent url.  Update this with your agent url.
+                // Your agent url can be found in the Electric Imp ide at the top of the agent codeing window.
                 var agentURL = 'https://agent.electricimp.com/KToEhaVnO0S4';
 
                 $('.buttons button').on('click', getStateInput);
