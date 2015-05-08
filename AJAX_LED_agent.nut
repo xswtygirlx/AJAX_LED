@@ -44,11 +44,25 @@ if ("led" in serverSettings) {
 
 //store new settings locally and on the server
 function updateLEDSettings(newSettings) {
-    if ("color" in newSettings) led.color = newSettings.color;
+    if ("color" in newSettings) led.color = checkColorRange(newSettings.color);
     if ("state" in newSettings) led.state = newSettings.state;
     storeSettings({"led" : led});
 }
 
+function checkColorRange(colors) {
+    foreach(color, value in colors) {
+        //make sure color value is integer
+        if (typeof value == "string") value = value.tointeger();
+
+        //ensure color value is in range
+        if (value < 0) value = 0;
+        if (value > 255) value = 255;
+
+        //store adjusted color value in colors
+        colors[color] = value;
+    }
+    return colors
+}
 
 /////////////////////  DEVICE LISTENER  ///////////////////////
 

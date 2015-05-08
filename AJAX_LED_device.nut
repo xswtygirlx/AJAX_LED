@@ -45,12 +45,12 @@ function setColor(colors) {
         //make sure color value is integer
         if (typeof value == "string") value = value.tointeger();
 
-        //reverse polarity for my led
-        value = flipLEDPolarity(value);
-
         //ensure color value is in range
         if (value < 0) value = 0;
         if (value > 255) value = 255;
+
+        //reverse polarity for my led
+        value = flipLEDPolarity(value);
 
         //store adjusted color value in colors
         colors[color] = value;
