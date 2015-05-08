@@ -4,6 +4,7 @@
 
 // AJAX LED Example - agent code
 
+
 //////////////////////  ROCKY SETUP  //////////////////////////
 
 #require "Rocky.class.nut:1.0.0"
@@ -23,19 +24,29 @@ led <- {
 //get settings stored on server
 local serverSettings = server.load();
 
+//store settings to server
+function storeSettings(newSettings) {
+    local err = server.save(newSettings);
+    if (err == 0) {
+        server.log("Settings saved");
+    } else {
+        server.log("Settings NOT saved. Error: " + err.tostring());
+    }
+}
+
 if ("led" in serverSettings) {
     //if server has a stored LED settings then update local settings
     led = serverSettings.led;
 } else {
     //else store default settings to server
-    server.save({"led" : led});
+    storeSettings({"led" : led});
 }
 
 //store new settings locally and on the server
 function updateLEDSettings(newSettings) {
     if ("color" in newSettings) led.color = newSettings.color;
     if ("state" in newSettings) led.state = newSettings.state;
-    server.save({"led" : led});
+    storeSettings({"led" : led});
 }
 
 

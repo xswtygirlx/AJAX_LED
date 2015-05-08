@@ -14,6 +14,14 @@
                 font-size: 36px;
             }
 
+            form {
+                margin-bottom: 1%;
+            }
+
+            span {
+                padding: 0 5px;
+            }
+
             .buttons button {
                 font-size: 24px;
                 border-radius: 4px;
@@ -21,38 +29,75 @@
                 margin: 0 5%;
             }
 
-            form {
+            .container {
                 margin: auto;
                 width: 80%;
                 text-align: center;
             }
 
-            .buttons {
+            .controls {
+                border: 1px dotted gray;
+                width: 70%;
                 margin: auto;
-                width: 80%;
-                text-align: center;
+            }
+
+            .current-settings {
+                border: 1px dotted gray;
+                width: 70%;
+                margin: auto;
+            }
+
+            .buttons {
+                margin-bottom: 1%;
+            }
+
+            .red {
+                color: red;
+            }
+
+            .blue {
+                color: blue;
+            }
+
+            .green {
+                color: green;
             }
         </style>
     </head>
 
     <body>
         <h1>AJAX LED Example</h1>
-        <br>
-        <div class='buttons'>
-            <!-- current data-state values are for anode common RGB LED -->
-            <!-- data-state values should match your imp's device code setup on/off values -->
-            <button id='on' data-state='0'>ON</button>
-            <button id='off' data-state='1'>OFF</button>
-        </div>
-        <br>
-        <div class='color'>
-            <form id='color-form'>
-                <label>RED: </label><input id='red'></input>
-                <label>GREEN: </label><input id='green'></input>
-                <label>BLUE: </label><input id='blue'></input>
-                <button type='submit' id='color'>Set Color</button>
-            </form>
-        </div>
+        <div class= 'container'>
+            <div class='current-settings'>
+                <h2>Current LED Settings</h2>
+                <h4 class='power-status'>Power: <span></span></h4>
+                <h4 class='color-status'>Color:
+                    <span class='red'></span>
+                    <span class='green'></span>
+                    <span class='blue'></span>
+                </h4>
+            </div>
+            <br>
+            <div class='controls'>
+                <h2>LED Controls</h2>
+                <div class='buttons'>
+                    <!-- current data-state values are for anode common RGB LED -->
+                    <!-- data-state values should match your imp's device code setup on/off values -->
+                    <button id='on' data-state='0'>ON</button>
+                    <button id='off' data-state='1'>OFF</button>
+                </div>
+                <br>
+                <div class='color'>
+                    <form id='color-form'>
+                        <label>RED: </label><input id='red'></input>
+                        <label>GREEN: </label><input id='green'></input>
+                        <label>BLUE: </label><input id='blue'></input>
+                        <button type='submit' id='color'>Set Color</button>
+                    </form>
+                </div>
+                <br>
+            </div> <!-- controls -->
+        </div>  <!-- container -->
 
         <!-- jQuery -->
         <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js'></script>
@@ -63,6 +108,9 @@
                 // This is my test setup agent url.  Update this with your agent url.
                 // Your agent url can be found in the Electric Imp ide at the top of the agent codeing window.
                 var agentURL = 'https://agent.electricimp.com/KToEhaVnO0S4';
+
+                getState(updatePowerSetting);
+                getColor(updateColorSetting);
 
                 $('.buttons button').on('click', getStateInput);
                 $('#color').on('click', getColorInput);
@@ -91,12 +139,24 @@
                     }
                 }
 
+                function updatePowerSetting(power) {
+                    if (power == 1) power = 'OFF';
+                    if (power == 0) power = 'ON';
+                    $('.power-status span').text(power);
+                }
+
+                function updateColorSetting(color) {
+                    $('.red').text(color.red);
+                    $('.green').text(color.green);
+                    $('.blue').text(color.blue);
+                }
+
                 function getState(callback) {
                     $.ajax({
                         url : agentURL + '/state',
                         type: 'GET',
                         success : function(response) {
-                            if (callback) {callback(response.state)};
+                            if (callback && ('state' in response)) {callback(response.state)};
                         }
                     });
                 }
@@ -106,7 +166,7 @@
                         url: agentURL + '/color',
                         type: 'GET',
                         success : function(response) {
-                            if (callback) {callback(response.color)};
+                            if (callback && ('color' in response)) {callback(response.color)};
                         }
                     });
                 }
@@ -117,7 +177,7 @@
                         type: 'POST',
                         data: JSON.stringify({ 'state' : state }),
                         success : function(response) {
-                            console.log(response)
+                            if ('state' in response) updatePowerSetting(response.state);
                         },
                         error : function(jqXHR, textStatus, err) {
                             console.log(jqXHR.status + ' ' + textStatus + ': ' + err + ' - ' + jqXHR.responseText);
@@ -131,7 +191,7 @@
                         type: 'POST',
                         data: JSON.stringify({ 'color' : color }),
                         success : function(response) {
-                            console.log(response)
+                            if ('color' in response) updateColorSetting(response.color);
                         },
                         error : function(jqXHR, textStatus, err) {
                             console.log(jqXHR.status + ' ' + textStatus + ': ' + err + ' - ' + jqXHR.responseText);
