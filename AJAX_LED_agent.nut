@@ -50,6 +50,24 @@ function updateLEDSettings(newSettings) {
 }
 
 
+////////////////////////  FUNCTIONS  //////////////////////////
+
+function checkColorRange(colors) {
+    foreach(color, value in colors) {
+        //make sure color value is integer
+        if (typeof value == "string") value = value.tointeger();
+
+        //ensure color value is in range
+        if (value < 0) value = 0;
+        if (value > 255) value = 255;
+
+        //store adjusted color value in colors
+        colors[color] = value;
+    }
+    return colors
+}
+
+
 /////////////////////  DEVICE LISTENER  ///////////////////////
 
 //send device led settings
@@ -80,8 +98,9 @@ app.post("/color", function(context) {
         if (!("blue" in data.color)) throw "Missing param: color.blue";
 
         // if preflight check passed - do things
-        device.send("color", data.color); //send color to device
-        updateLEDSettings({"color" : data.color}); //update local & server
+        local newColor = checkColorRange(data.color);
+        device.send("color", newColor); //send color to device
+        updateLEDSettings({"color" : newColor}); //update local & server
 
         // send the response
         context.send({ verb = "POST", color = data.color });
