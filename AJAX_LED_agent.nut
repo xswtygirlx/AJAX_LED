@@ -96,18 +96,19 @@ app.post("/color", function(context) {
         if (!("red" in data.color)) throw "Missing param: color.red";
         if (!("green" in data.color)) throw "Missing param: color.green";
         if (!("blue" in data.color)) throw "Missing param: color.blue";
-
-        // if preflight check passed - do things
-        local newColor = checkColorRange(data.color);
-        device.send("color", newColor); //send color to device
-        updateLEDSettings({"color" : newColor}); //update local & server
-
-        // send the response
-        context.send({ verb = "POST", color = data.color });
     } catch (ex) {
         context.send(400, ex);
         return;
     }
+
+    // if preflight check passed - do things
+    local newColor = checkColorRange(data.color); //make sure colors are in range 0-255
+    device.send("color", newColor); //send color to device
+    updateLEDSettings({"color" : newColor}); //update local & server
+
+    // send the response
+    context.send({ verb = "POST", color = data.color });
+
 });
 
 app.post("/state", function(context) {

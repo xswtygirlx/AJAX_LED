@@ -56,7 +56,7 @@ function setColor(colors) {
         colors[color] = value;
     }
 
-    //use colors table to set color variables
+    //set color variables
     red = colors.red;
     green = colors.green;
     blue = colors.blue;
