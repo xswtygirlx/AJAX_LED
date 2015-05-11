@@ -7,7 +7,7 @@
 
 //////////////////////  ROCKY SETUP  //////////////////////////
 
-#require "Rocky.class.nut:1.0.0"
+#require "Rocky.class.nut:1.1.1"
 app <- Rocky();
 
 
