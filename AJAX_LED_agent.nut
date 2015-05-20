@@ -107,7 +107,7 @@ app.post("/color", function(context) {
     updateLEDSettings({"color" : newColor}); //update local & server
 
     // send the response
-    context.send({ verb = "POST", color = data.color });
+    context.send(200, { color = data.color });
 
 });
 
@@ -127,6 +127,6 @@ app.post("/state", function(context) {
     updateLEDSettings({"state" : data.state}); //update local & server
 
     // send the response
-    context.send({ verb = "POST", state = led.state });
+    context.send(200, { state = led.state });
 
 });

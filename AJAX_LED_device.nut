@@ -98,8 +98,7 @@ agent.on("state", setState);
 
 /////////////////////////  RUNTIME  //////////////////////
 
-// wait 1s so on a cold boot agent has time to come online and get settings from the server
-// then request LED settings
+//wait 1s so on a cold boot agent has time to come online and get settings from the server then request LED settings
 imp.wakeup(1, function() {
     agent.send("getSettings", null);
 })
