@@ -1,7 +1,7 @@
 $(document).ready(function() {
     // This is my test setup agent url.  Update this with your agent url.
     // Your agent url can be found in the Electric Imp ide at the top of the agent codeing window.
-    var agentURL = 'https://agent.electricimp.com/KToEhaVnO0S4';
+    var agentURL = "<YOUR_AGENT_URL>";
 
     getState(updatePowerSetting);
     getColor(updateColorSetting);
